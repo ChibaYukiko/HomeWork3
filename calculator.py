@@ -1,6 +1,6 @@
 # python calculator.py
 
-def readNumber(line, index): # 数字を読む 23 -> 2*10+3
+def readNumber(line, index): # read number
     number = 0
     while index < len(line) and line[index].isdigit():
         number = number * 10 + int(line[index])
@@ -16,25 +16,25 @@ def readNumber(line, index): # 数字を読む 23 -> 2*10+3
     return token, index
 
 
-def readPlus(line, index): # + 記号を読む
+def readPlus(line, index): # read +
     token = {'type': 'PLUS'}
     return token, index + 1
 
 
-def readMinus(line, index): # - 記号を読む
+def readMinus(line, index): # read -
     token = {'type': 'MINUS'}
     return token, index + 1
 
-def readMulti(line, index): # * 記号を読む
+def readMulti(line, index): # read *
     token = {'type': 'Multi'}
     return token, index + 1
 
-def readDivision(line, index): # / 記号を読む
+def readDivision(line, index): # read /
     token = {'type': 'Divis'}
     return token, index + 1
 
 
-def tokenize(line): # 数字と記号に分ける
+def tokenize(line):
     tokens = []
     index = 0
     while index < len(line):
@@ -47,7 +47,7 @@ def tokenize(line): # 数字と記号に分ける
         elif line[index] == '*':
             (token, index) = readMulti(line, index)
         elif line[index] == '/':
-            (token, index) = readDivion(line, index)
+            (token, index) = readDivision(line, index)
         else:
             print 'Invalid character found: ' + line[index]
             exit(1)
@@ -55,7 +55,43 @@ def tokenize(line): # 数字と記号に分ける
     return tokens
 
 
-def evaluate(tokens): # 計算する
+def md_evaluate(tokens): # * / calculate
+    tokens2 = []
+    index = 0
+
+    while index < len(tokens):
+        number = 0.0
+        if tokens[index]['type'] == 'NUMBER':
+            
+            if tokens[index+1]['type'] == 'Multi':
+                number = tokens[index]['number']*tokens[index+2]['number']
+                token = {'type': 'NUMBER', 'number': number}
+                index += 3
+                
+            elif tokens[index+1]['type'] == 'Divis':
+                number = tokens[index]['number']*1.0/tokens[index+2]['number']
+                token = {'type': 'NUMBER', 'number': number}
+                index += 3
+                
+            elif tokens[index+1]['type'] in {'PLUS','MINUS'} :
+                token = {'type': 'NUMBER', 'number': tokens[index]['number']}
+                index += 1
+            else:
+                print 'Invalid syntax'
+        elif tokens[index]['type'] == 'PLUS':
+            token = {'type': 'PLUS'}
+            index += 1
+        elif tokens[index]['type'] == 'MINUS':
+            token = {'type': 'MINUS'}
+            index += 1
+        else:
+            print 'Invalid syntax'
+        tokens2.append(token)   
+    return tokens2
+
+
+
+def evaluate(tokens): # + - calculate
     answer = 0
     tokens.insert(0, {'type': 'PLUS'}) # Insert a dummy '+' token
     index = 1
@@ -75,5 +111,6 @@ while True:
     print '> ',
     line = raw_input()
     tokens = tokenize(line)
-    answer = evaluate(tokens)
+    tokens2 = md_evaluate(tokens)
+    answer = evaluate(tokens2)
     print "answer = %f\n" % answer
