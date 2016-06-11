@@ -26,11 +26,11 @@ def readMinus(line, index): # read -
     return token, index + 1
 
 def readMulti(line, index): # read *
-    token = {'type': 'Multi'}
+    token = {'type': 'MULTI'}
     return token, index + 1
 
 def readDivision(line, index): # read /
-    token = {'type': 'Divis'}
+    token = {'type': 'DIVIS'}
     return token, index + 1
 
 
@@ -60,33 +60,45 @@ def md_evaluate(tokens): # * / calculate
     index = 0
 
     while index < len(tokens):
-        number = 0.0
+
         if tokens[index]['type'] == 'NUMBER':
             
-            if tokens[index+1]['type'] == 'Multi':
-                number = tokens[index]['number']*tokens[index+2]['number']
+            number = tokens[index]['number']
+
+            print number
+
+            if index == len(tokens)-1:
+                print 'last number'
                 token = {'type': 'NUMBER', 'number': number}
-                index += 3
-                
-            elif tokens[index+1]['type'] == 'Divis':
-                number = tokens[index]['number']*1.0/tokens[index+2]['number']
-                token = {'type': 'NUMBER', 'number': number}
-                index += 3
-                
-            elif tokens[index+1]['type'] in {'PLUS','MINUS'} :
-                token = {'type': 'NUMBER', 'number': tokens[index]['number']}
                 index += 1
+
             else:
-                print 'Invalid syntax'
-        elif tokens[index]['type'] == 'PLUS':
-            token = {'type': 'PLUS'}
+                while tokens[index+1]['type'] in {'MULTI', 'DIVIS'}:
+                    print 'exit * or /'
+                    index += 2
+                    if tokens[index-1]['type'] == 'MULTI':
+                        number = number * tokens[index]['number']
+                    else:
+                        number = number*1.0/tokens[index]['number']
+
+                    if index >= len(tokens)-1:
+                        break;
+                     
+                token = {'type': 'NUMBER', 'number': number}
+                index += 1
+
+        elif tokens[index]['type'] in {'PLUS', 'MINUS'}:
+
+            print 'Plus or Minus'
+            
+            token = {'type': tokens[index]['type']}
             index += 1
-        elif tokens[index]['type'] == 'MINUS':
-            token = {'type': 'MINUS'}
-            index += 1
+
         else:
             print 'Invalid syntax'
-        tokens2.append(token)   
+
+        tokens2.append(token)
+        
     return tokens2
 
 
@@ -95,12 +107,18 @@ def evaluate(tokens): # + - calculate
     answer = 0
     tokens.insert(0, {'type': 'PLUS'}) # Insert a dummy '+' token
     index = 1
-    while index < len(tokens):
-        if tokens[index]['type'] == 'NUMBER':
-            if tokens[index - 1]['type'] == 'PLUS':
-                answer += tokens[index]['number']
-            elif tokens[index - 1]['type'] == 'MINUS':
-                answer -= tokens[index]['number']
+
+    tokens2 = md_evaluate(tokens)
+    
+    while index < len(tokens2):
+        
+        if tokens2[index]['type'] == 'NUMBER':
+            
+            if tokens2[index - 1]['type'] == 'PLUS':
+                answer += tokens2[index]['number']
+                
+            elif tokens2[index - 1]['type'] == 'MINUS':
+                answer -= tokens2[index]['number']
             else:
                 print 'Invalid syntax'
         index += 1
@@ -111,6 +129,5 @@ while True:
     print '> ',
     line = raw_input()
     tokens = tokenize(line)
-    tokens2 = md_evaluate(tokens)
-    answer = evaluate(tokens2)
+    answer = evaluate(tokens)
     print "answer = %f\n" % answer
