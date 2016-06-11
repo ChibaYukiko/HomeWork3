@@ -65,16 +65,16 @@ def md_evaluate(tokens): # * / calculate
             
             number = tokens[index]['number']
 
-            print number
+            #print number
 
-            if index == len(tokens)-1:
-                print 'last number'
+            if index == len(tokens)-1: 
+                #print 'last number'
                 token = {'type': 'NUMBER', 'number': number}
                 index += 1
 
             else:
                 while tokens[index+1]['type'] in {'MULTI', 'DIVIS'}:
-                    print 'exit * or /'
+                    #print 'exit * or /'
                     index += 2
                     if tokens[index-1]['type'] == 'MULTI':
                         number = number * tokens[index]['number']
@@ -89,7 +89,7 @@ def md_evaluate(tokens): # * / calculate
 
         elif tokens[index]['type'] in {'PLUS', 'MINUS'}:
 
-            print 'Plus or Minus'
+            #print 'Plus or Minus'
             
             token = {'type': tokens[index]['type']}
             index += 1
