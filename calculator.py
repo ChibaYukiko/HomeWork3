@@ -68,16 +68,12 @@ def evaluateMultiplyAndDivide(tokens): # * / calculate
             
             if tokens[index-1]['type'] == 'MULTI':
                 number = number * tokens[index]['number']
-                #print number
                 
             elif tokens[index-1]['type'] == 'DIVIS':
                 number = number*1.0 / tokens[index]['number']
-                #print number
-                
+               
             else : # tokens[index1]['type'] in {'PLUS', 'MINUS'}
-                number = tokens[index]['number']
-                #print number
-            
+                number = tokens[index]['number']           
                    
         elif tokens[index]['type'] in {'PLUS', 'MINUS'}:
             
