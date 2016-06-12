@@ -58,7 +58,7 @@ def tokenize(line):
 def evaluateMultiplyAndDivide(tokens): # * / calculate
     tokens2 = []
 
-    tokens.insert(0, {'type': 'MULTI'})　# Insert a dummy '*' token
+    tokens.insert(0, {'type': 'MULTI'}) # Insert a dummy '*' token
     index = 1
     number = 1
 
