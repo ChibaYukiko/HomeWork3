@@ -55,7 +55,7 @@ def tokenize(line):
     return tokens
 
 
-def md_evaluate(tokens): # * / calculate
+def evaluateMultiplyAndDivide(tokens): # * / calculate
     tokens2 = []
     index = 0
 
@@ -103,25 +103,31 @@ def md_evaluate(tokens): # * / calculate
 
 
 
-def evaluate(tokens): # + - calculate
+def evaluatePlusAndMinus(tokens): # + - calculate
     answer = 0
     tokens.insert(0, {'type': 'PLUS'}) # Insert a dummy '+' token
     index = 1
 
-    tokens2 = md_evaluate(tokens)
-    
-    while index < len(tokens2):
+    while index < len(tokens):
         
-        if tokens2[index]['type'] == 'NUMBER':
+        if tokens[index]['type'] == 'NUMBER':
             
-            if tokens2[index - 1]['type'] == 'PLUS':
-                answer += tokens2[index]['number']
+            if tokens[index - 1]['type'] == 'PLUS':
+                answer += tokens[index]['number']
                 
-            elif tokens2[index - 1]['type'] == 'MINUS':
-                answer -= tokens2[index]['number']
+            elif tokens[index - 1]['type'] == 'MINUS':
+                answer -= tokens[index]['number']
             else:
                 print 'Invalid syntax'
         index += 1
+    return answer
+
+
+def evaluate(tokens):
+
+    tokens2 = evaluateMultiplyAndDivide(tokens)
+    answer = evaluatePlusAndMinus(tokens2)
+
     return answer
 
 
