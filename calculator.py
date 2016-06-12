@@ -57,48 +57,42 @@ def tokenize(line):
 
 def evaluateMultiplyAndDivide(tokens): # * / calculate
     tokens2 = []
-    index = 0
+
+    tokens.insert(0, {'type': 'MULTI'})
+    index = 1
+    number = 1
 
     while index < len(tokens):
 
         if tokens[index]['type'] == 'NUMBER':
             
-            number = tokens[index]['number']
-
-            #print number
-
-            if index == len(tokens)-1: 
-                #print 'last number'
-                token = {'type': 'NUMBER', 'number': number}
-                index += 1
-
-            else:
-                while tokens[index+1]['type'] in {'MULTI', 'DIVIS'}:
-                    #print 'exit * or /'
-                    index += 2
-                    if tokens[index-1]['type'] == 'MULTI':
-                        number = number * tokens[index]['number']
-                    else:
-                        number = number*1.0/tokens[index]['number']
-
-                    if index >= len(tokens)-1:
-                        break;
-                     
-                token = {'type': 'NUMBER', 'number': number}
-                index += 1
-
-        elif tokens[index]['type'] in {'PLUS', 'MINUS'}:
-
-            #print 'Plus or Minus'
+            if tokens[index-1]['type'] == 'MULTI':
+                number = number * tokens[index]['number']
+                #print number
+                
+            elif tokens[index-1]['type'] == 'DIVIS':
+                number = number*1.0 / tokens[index]['number']
+                #print number
+                
+            else : # tokens[index1]['type'] in {'PLUS', 'MINUS'}
+                number = tokens[index]['number']
+                #print number
             
-            token = {'type': tokens[index]['type']}
-            index += 1
-
-        else:
-            print 'Invalid syntax'
-
-        tokens2.append(token)
-        
+                   
+        elif tokens[index]['type'] in {'PLUS', 'MINUS'}:
+            
+            token1 = {'type': 'NUMBER', 'number': number}
+            tokens2.append(token1)
+            
+            token2 = {'type': tokens[index]['type']}
+            tokens2.append(token2)
+                      
+        index += 1
+            
+    # index >= len(tokens) last number
+    token = {'type': 'NUMBER', 'number': number}
+    tokens2.append(token)
+       
     return tokens2
 
 
